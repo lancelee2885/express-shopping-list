@@ -1,5 +1,5 @@
-const { json } = require("express");
 const express = require("express");
+const { BadRequestError, NotFoundError } = require("./expressErrors");
 
 const db = require("./fakeDb");
 const router = new express.Router();
@@ -11,6 +11,8 @@ router.get("/", function (req, res, next) {
 router.post("/", function (req, res, next) {
   let name = req.body.name;
   let price = req.body.price;
+  if (!name || !price) throw new BadRequestError();
+  
   db.items.push({name, price})
   
   return res.json({"added": {name, price}})
@@ -23,18 +25,26 @@ router.get("/:name", function (req, res, next){
       return res.json(item)
     }
   }
+
+  throw new NotFoundError();
 })
 
 router.patch("/:name", function (req, res, next){
   let items = db.items;
-  let name = req.params.name;
-  let price = req.body.price;
+  let oldName = req.params.name;
+  let newName = req.body.name;
+  let newPrice = req.body.price;
+
+  if (!newName || !newPrice) throw new BadRequestError();
+
   for (let item of items){
-    if (item.name === name){
-      item.name = req.body.name;
-      item.price = price;
+    if (item.name === oldName){
+      item.name = newName;
+      item.price = newPrice;
       return res.json({"updated": item})
   }}
+  
+  throw new NotFoundError();
 })
 
 router.delete("/:name", function (req, res, next){
@@ -47,6 +57,8 @@ router.delete("/:name", function (req, res, next){
       return res.json({"message": "Deleted"})
     }
   }
+
+  throw new NotFoundError();
 })
 
 
