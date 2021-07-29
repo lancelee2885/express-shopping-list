@@ -98,10 +98,8 @@ describe("PATCH /items/:name", function() {
   });
 });
 
-
 describe("DELETE /items/:name", function() {
   it("Deletes an item", async function() {
-    console.log("before first DELETE", db.items);
     const resp = await request(app).delete(`/items/${popsicle.name}`);
 
     expect(resp.body).toEqual({message: "Deleted"});

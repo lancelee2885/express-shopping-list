@@ -1,3 +1,5 @@
+/** TODO: DOCSTRINGS */
+
 const express = require("express");
 const { BadRequestError, NotFoundError } = require("./expressErrors");
 
@@ -13,6 +15,7 @@ router.post("/", function (req, res, next) {
   let price = req.body.price;
   if (!name || !price) throw new BadRequestError();
   
+  // extract into new variable
   db.items.push({name, price})
   
   return res.json({"added": {name, price}})
@@ -53,15 +56,13 @@ router.delete("/:name", function (req, res, next){
 
   for (let i = 0; i<items.length; i++){
     if (items[i].name === name){
-      items.splice(i,1);
+      items.splice(i,1); // Use array.filter()
       return res.json({"message": "Deleted"})
     }
   }
 
   throw new NotFoundError();
 })
-
-
 
 
 module.exports = router;
